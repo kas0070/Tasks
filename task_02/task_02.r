@@ -1,7 +1,7 @@
 
+###Task 01b First, Task 02b Second, Extra Credit 1 Lastly
 
-
-setwd("")
+###Task 01b
 setwd("C:\\Users\\kas0070\\Desktop\\evolution\\tasks\\task_02")
 
 #This reads in the file. Because you've set your working directory to thje folder withur data file. you need only enter the file's name.
@@ -80,7 +80,7 @@ Feeds <- which(beren$event == "bottle")
 #what's going on. Don't worry about wehat this means...
 
 dayID <- apply(beren, 1, function(x) paste(x[1:3], collapse="-"))
-dateID <- sapply(dayID, as.Date, format= "%Y-%d" , origin = "2019-04-18")
+dateID <- sapply(dayID, as.Date, format= "%Y-%m-%d" , origin = "2019-04-18")
 
 #We want to record how many days old my son was for each observation. Since each observation has a date, and the one of the observations is his birth, we just find the date of his birth
 #and subtract it from each of the other observations!So he was born on April 18th and he weighed on April 20th, so April 20th - April 18th should give us his age as ''2''.
@@ -109,8 +109,6 @@ head(beren)
 #come talk to me before Wed.
 
 #save file as a CSV for later.
-
-write.csv(beren3, "beren_new.csv", quote=F, row.names=FALSE)
 
 #Push the folder to git,do self-quiz and make sure you understand everything.
 
@@ -141,6 +139,160 @@ Dates <- which(beren[,9] == "solids")
 #If I had a long list of numbers, and wanted to find out how many different numbers were in that list,how could I do it?
 # 2,56,45,3,4,5,6,7,7,8,9,4,6,3,5,3
 
+write.csv(beren3, "beren_new.csv", quote=F, row.names=FALSE)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### TASK 02b
+setwd("C:\\Users\\kas0070\\Desktop\\evolution\\tasks\\task_02")
+beren3 <- read.csv("beren_new.csv", stringsAsFactors=F)
+
+#Question 1: 
+#Hypothesis 1:The amount Beren eac day is postively correlated with his weight.
+#Beren may have days henot feeling good and eats less or vice versa. He may be extra hungry one day and not the other day. So to say that we assume it is postively correlated most days is not entirely accurate.
+
+#Hypothesis 2: There is a relatioship between how much Beren naps and how much he drinks each day.
+#Im sure there is but we are not really testing anything!
+
+#Hypotheis 3: The amount of milk Beren drinks in a day increases over time.
+# It does as he grows.
+
+#potential hypothesis: The duration of naps Beren has in a day decreases over time.(overtime=age)
+
+#How much milk does Beren eat at a sitting? This tells us
+Feeds <- which(beren3$event == "bottle")
+avgMilk <- mean( beren3$value[Feeds])
+
+#What are the units for this AvgMilk value?
+#oz
+
+#Why did I use the "value" column from beren3 object? What is that?
+#beren3 <- beren2[order(beren2$age),] was the code in task 01b and it has the variable age in order and naps directed to the directory beren3. To get the avg milk you have to have the toal Milk drinking events which depend on the age(how amny times the baby drank milk).
+
+#What does the set of square brackets with "feeds" inside it do here? Is it important?why?
+#[Feeds],identifies the the directory Feeds <- which(beren3$event == "bottle") that has identified the event the bottle was used so when looking for avgMilk value [Feeds] identifies all the data just for event of drinking milk.
+
+# The tapply() function takes some data (here,value) and some treatment (here,age in daya) and applies some other function (here,mean) to those data.
+avgFeed <- tapply(beren3$value[Feeds], beren3$age[Feeds], mean)
+
+# Look at the avgFeed object using the funstions and tricks you learned last time.
+#Notice that the day is saved as a name. So each element tells a day and an average-amount-that-day.
+
+#We can also look at the raw amount of milk, and the variance in the amount of milk. he's consumed each day, and the number of bottles each day.
+
+#All we have to do is change what function we're applying, and store the output as different objects!
+varFeed <- tapply(beren3$value[Feeds], beren3$age[Feeds], var)
+totalFeed <- tapply(beren3$value[Feeds], beren3$age[Feeds], sum)
+numFeeds <- tapply(beren3$value[Feeds] , beren3$value[Feeds] , length)
+
+#The cor() function tells us the correlation between two sets of numbers (here,age and the amount cosumend per day). If you do ?cor you can find different options for different types of correlations.
+cor(beren3$value[Feeds], beren3$age[Feeds])
+
+#The cor.test() function works like cor(), but it conducts the appropriate test for the type of correlation you chosse (the method argument) and so returns things like a p-value.
+cor.test(beren3$valu[Feeds], beren3$age[Feeds])
+
+#It's useful to save the output of statistical tests as objects.
+berenCor <- cor.test(beren3$value[Feeds], beren3$age[Feeds])
+
+#As you can then access the p-value and other summaries of the test later.
+berenCor
+summary(berenCor)
+
+#You can conduct any statistical test you've ever heard of, or that you can conceive of,in R. That's it's major strength and a big reason why we NEED to use it this semester: so you can explore things that are beyond the scope of programs you've used in the past.
+#Here's a simple example,though, of doing an ANOVA in R. aov() is the ANOVA function. wilcox.test() is a Wilcox's test, ks.test() is a Kolmogorov-Smirnov test...etc etc.
+
+#Note that the ~ is the tilde, that litle thing up beneath your Esc key on a QWERTY keyboard. In R it means "as a function of"
+berenAnova <- aov(beren3$value[Feeds] ~ beren3$caregiver[Feeds])
+
+berenAnova
+
+#Most people dont't know what an ANOVA actually is or does. You should never use a stastical test if you dont' understand it.
+#However, you should ALWAYS plot your data! Plotting in R is very easy. In fact, plots are the main strength of R.
+#Let's plot how much Beren eats(value) as a function of who his caregiver was for the feeding.
+boxplot( beren3$value[Feeds] ~ beren3$caregiver[Feeds], xlab= "who gave the bottle" , ylab = "amount of milk consumed (oz)")
+
+#The code looks very similar to the ANOVA code above. We're actually doing the same thing. But in the ANOVA line, we're asking R to calcuate a specific statistic that produces a summary of the graph that you'tr looking at now.
+#Even if you're having a hard time understanding this graph right now, it's probably more meaningful to you than the number the ANOVA spat out.
+#But we can make much nicer and more informative graphs.
+
+#We can edit literally anything about any plot. We can do this by telling R what parameters to use via the par() function.
+#Type ?par and try to determine what the four values I editted below do.
+par(las=1, mar=c(5,5,1,1), mgp=c(2, 0.5, 0), tck=-0.01)
+
+#We can then make a simple plot.
+plot(as.numeric(names(totalFeed)), totalFeed, type="b", pch=16, xlab="age in days", ylab="ounces in milk")
+
+#and we can add a horizontal line indicating the average amount of milk consumed each day, for easy comparisons.
+abline(h=mean(totalFeed), lty=2, col='red')
+
+#We can save the above graph as a pdf by doing this:
+pdf("r02b-totalMilkByDay.pdf", height =4, width =4)
+par(las=1, mar=c(5,5,1,1), mgp=c(2, 0.5, 0), tck=-0.01)
+plot(as.numeric(names(totalFeed)), totalFeed, type="b", pch=16, xlab="age in days", ylab="ounces of milk")
+abline(h=mean(totalFeed), lty=2, col='red')
+dev.off()
+
+#Now look in your working directory and you should see that there's a new PDF! You can also save R graphs as jpegs, tiffs, pngs, whatever format you wish.
+#Question2:Why is the graph impossible to interpret
+#The graph does not show a postive or negative correlation. The ounces of milk changed per day depending of the dAY Beren was there and how long beren was babysitting. The ounces of milk does not rpresent everyday because some days Beren was not at daycare but he still increased in age. We do not have data for the ounces of milk he drank at home. There is no real consitent data between both variables because we can not change that he will be getting older at home. He gets older but no data on his daily milk cosumption.
+#Around 200+ days Beren may have been to the daycare more often then in days 250+. His age increases can not change that but the milkdata would be lost if not recorded when the child is not in daycare
+
+
+source("http://jonsmitchell.com/code/plotFxn02b.R")
+pdf("r02b-cumulativeMilkByTime.pdf", height =4, width =4)
+par(las=1, mar=c(5,5,1,1), mgp=c(2, 0.5, 0), tck=-0.01)
+plot(as.numeric(names(cumulativeFeed)), cumulativeFeed, type="b", pch=16, xlab="time of day", ylab="total milk(oz)")
+abline(h=mean(cumulativeFeed), lty=2, col='red')
+dev.off()
+
+
+unique(beren3$event)
+
+# Friday hypothesis: The duration of naps Beren has in a day decreases over time.(overtime=age)
+
+
+#Extra Credit 1 Assignment with Task 02b
+
+setwd("C:\\Users\\kas0070\\Desktop\\evolution\\tasks\\task_02")
+beren3 <- read.csv("beren_new.csv", stringsAsFactor=F)
+
+# Find which rows of beren3 are naps
+Naps <- which(beren3$event == "nap")
+
+# Subset beren3 using [] to only be naps, and save as beren4
+beren4 <- beren3[Naps,]
+
+startTime <- beren4$start_hour + beren4$start_minute/60
+startTime[2]
+
+head(beren4)
+endTime <- beren4$end_hour + beren4$end_minute/60
+startTime[1]
+duration <- startTime - endTime
+duration[1:6]
+Totaltime <- tapply(beren4$day[Naps], beren4$age[Naps])
+Totaltime <- tapply(beren4$day[Naps], beren4$age[Naps], sum)
+par(las=1, mar=c(5,5,1,1), mgp=c(2, 0.5, 0), tck=-0.1)
+plot(as.numeric(names(Totaltime)), Totaltime, type="b", pch=16, xlab="day", ylab="Total time")
+cor(beren4$day[Naps], beren4$age[Naps])
+cor.test(beren4$day[Feeds], beren4$age[Naps])
+berenCor <- cor.test(beren4$day[Naps], beren4$age[Naps])
+berenCor
+cor.test(beren4$age, duration)
+
+# Extra Credit1: What is the nature of the relationship? 
+#This is negliable negative correlation relationship between when the nap starts and its total duration (time of the nap). When one variable decreases, the other variable increases. 
 
 
 
