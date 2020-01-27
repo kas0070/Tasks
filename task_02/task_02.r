@@ -228,7 +228,9 @@ boxplot( beren3$value[Feeds] ~ beren3$caregiver[Feeds], xlab= "who gave the bott
 
 #We can edit literally anything about any plot. We can do this by telling R what parameters to use via the par() function.
 #Type ?par and try to determine what the four values I editted below do.
+
 par(las=1, mar=c(5,5,1,1), mgp=c(2, 0.5, 0), tck=-0.01)
+?par
 
 #We can then make a simple plot.
 plot(as.numeric(names(totalFeed)), totalFeed, type="b", pch=16, xlab="age in days", ylab="ounces in milk")
@@ -263,7 +265,6 @@ unique(beren3$event)
 
 
 #Extra Credit 1 Assignment with Task 02b
-
 setwd("C:\\Users\\kas0070\\Desktop\\evolution\\tasks\\task_02")
 beren3 <- read.csv("beren_new.csv", stringsAsFactor=F)
 
@@ -281,14 +282,14 @@ endTime <- beren4$end_hour + beren4$end_minute/60
 startTime[1]
 duration <- startTime - endTime
 duration[1:6]
-Totaltime <- tapply(beren4$day[Naps], beren4$age[Naps])
-Totaltime <- tapply(beren4$day[Naps], beren4$age[Naps], sum)
+
+Totaltime <- tapply(duration, beren4$age, sum)
+
 par(las=1, mar=c(5,5,1,1), mgp=c(2, 0.5, 0), tck=-0.1)
-plot(as.numeric(names(Totaltime)), Totaltime, type="b", pch=16, xlab="day", ylab="Total time")
-cor(beren4$day[Naps], beren4$age[Naps])
-cor.test(beren4$day[Feeds], beren4$age[Naps])
-berenCor <- cor.test(beren4$day[Naps], beren4$age[Naps])
-berenCor
+plot(as.numeric(names(Totaltime)), Totaltime, type="b", xlab="day", ylab="Total time")
+cor(Totaltime, as.numeric(names(Totaltime)))
+
+
 cor.test(beren4$age, duration)
 
 # Extra Credit1: What is the nature of the relationship? 
@@ -296,3 +297,43 @@ cor.test(beren4$age, duration)
 
 
 
+
+###Task 02c
+# Set up data & directory
+setwd("C:\\Users\\kas0070\\Desktop\\evolution\\tasks\\task_02")
+beren3 <- read.csv("beren_new.csv", stringsAsFactor=F)
+onlyNaps <- beren3[which(beren3$event == "nap"),]
+
+
+#hypothesis: The total number of naps per day decreases over time.
+
+NumberNaps <- tapply(onlyNaps$age, onlyNaps$age, length)
+Day <- as.numeric(names(NumberNapss))
+?par
+plot(Day, NumberNaps)
+
+
+par( col.main = "black")
+
+??yaxis
+
+wilcox.test(Day, NumberNaps)
+#t.test for 2 variables
+
+mean(y)
+Day[1:74]
+mean()
+
+mean(NumberNaps)
+mean(NumberNaps[1:273])
+sum(NumberNaps)
+
+NumberNaps[]
+#Tests the hypothesis, you can see that after day 204 at the babysitter naps decrease down to 1. The total number of naps per day decreases over time.
+
+
+#save as pdf
+pdf("r02c-averageNumberNaps.pdf", height =4, width =4)
+plot(Day, NumberNaps)
+abline(h=(NumberNaps), lty=2, col='red')
+dev.off()
