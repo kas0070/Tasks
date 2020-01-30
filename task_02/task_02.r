@@ -305,7 +305,7 @@ beren3 <- read.csv("beren_new.csv", stringsAsFactor=F)
 onlyNaps <- beren3[which(beren3$event == "nap"),]
 
 
-#hypothesis: The total number of naps per day decreases over time.
+#hypothesis: The total number of naps per day decreases over time. 
 
 NumberNaps <- tapply(onlyNaps$age, onlyNaps$age, length)
 Day <- as.numeric(names(NumberNapss))
