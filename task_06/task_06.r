@@ -21,6 +21,7 @@ object<-coalescent.plot()
 print(object)
 plot(object)
 
+10
 #2:12N. About 12 generations for any given allele.
 #3: 1 on average, The variance or range can be 1-4.
 #Can find average of the squared differences from the Mean. The variance is 2.
@@ -41,11 +42,13 @@ stats <- simulate(model, nsim = 3)
 
 Diversity <- stats$pi
 Diversity
+pi
 #no because each locus has it own measure of genetic diversity in the sim model of 1 person if using nsim 1 or any number of people.
 Nloci <- length(stats$trees)
 t1 <- read.tree(text=stats$trees[[1]][1])
 plot(t1)
 axisPhylo()
+
 # Question 6: The number of tips is reprsented as a group that has a particular locus not an individual in this simulation.
 Agel <- max(nodeHeights(t1))
 t2 <- read.tree(text=stats$trees[[2]][1])
@@ -55,7 +58,7 @@ axisPhylo()
 #
 #Question 7:Yes, There is reordering of the loci for SNPS for gentic mutation but same timeline.
 
-par(mfrow=c(1,2))
+par(mfrow=c(1,3))
 plot(t1)
 axisPhylo()
 plot(t2)
