@@ -96,7 +96,8 @@ abline(0, 1, lwd=2, col='red', lty=2)
 #The negative slope helps indicate this that one increases and one decreases. These two variable are time and speciation.
 
 #Q10:
-fit.bd(AnolisTree, b=NULL, d=NULL, rho=0.2)
-
+bd <- fit.bd(AnolisTree, b=NULL, d=NULL, rho=0.2)
+yule <- fit.yule(AnolisTree, b=NULL, d=NULL, rho=0.02)
+AIC(bd, yule)
 #Rate:0.8031 new species form and disappear in lizards.
 
