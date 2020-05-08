@@ -1,1 +1,61 @@
+setwd("C:\Users\kas0070\Documents\R\R-3.6.2")
+trail <- readxl::read_excel("trail 1.xlsx")
+
+head(trail)
+
+
+install.packages(c('rgdal', 'leaflet', 'sp', 'lubridate', 'ggplot2'))
+
+library(leaflet)  # for generating interactive Javascript maps
+library(rgdal)    # GDAL bindings for loading GPX-data
+library(sp)       # spatial operations library
+library(lubridate)# datetime-operatings, here to convert from strings
+library(ggplot2) 
+
+library(leaflet)
+
+
+
+head(trail)
+
+
+
+trail$Lat=trail$Lat %>%
+  sub('°', 'd', .) %>%
+  char2dms %>%
+  as.numeric  
+
+trail$Long=trail$Long %>%
+  sub('°', 'd', .) %>%
+  char2dms %>%
+  as.numeric  
+
+head(trail)
+leaflet() %>% 
+  addTiles() %>% 
+  addPolylines(lat = trail$Lat, lng = trail$Long)
+
+
+leaflet() %>% 
+  addTiles() %>% 
+  addAwesomeMarkers(lat = trail$Lat, lng = trail$Long)
+
+# 37°47'00.7"N 81°08'42.5"W
+
+
+
+complex_lat="37°47'00.7\"N" %>%
+  sub('°', 'd', .) %>%
+  char2dms %>%
+  as.numeric  
+
+complex_long="81°08'42.5\"W" %>%
+  sub('°', 'd', .) %>%
+  char2dms %>%
+  as.numeric  
+
+
+leaflet() %>% 
+  addTiles() %>% 
+  addPolygons(lat = complex_lat, lng = complex_long)
 
