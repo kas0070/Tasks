@@ -1,4 +1,4 @@
-setwd("C:\Users\kas0070\Documents\R\R-3.6.2")
+setwd("C:\Users\kas0070\Desktop\evolution\tasks\Extra")
 trail <- readxl::read_excel("trail 1.xlsx")
 
 head(trail)
